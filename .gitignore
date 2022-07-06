@@ -1,0 +1,7 @@
+# Salesforce / SFDX / CCI
+.sfdx
+.salesforce
+.sf
+
+# Ignore VSCode config files
+.vscode
