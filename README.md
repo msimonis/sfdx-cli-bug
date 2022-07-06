@@ -1,18 +1,35 @@
-# Salesforce DX Project: Next Steps
+# SFDX CLI Bugs
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+There are two identified issues introduced in version 7.156.0 of the sfdx-cli. Each issue does not exist when using version 7.155.1 or prior, meaning you can install a prior version of the CLI (7.155.1, for example) and not see the issue mentioned.
 
-## How Do You Plan to Deploy Your Changes?
+## REST Deploy Not Working
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+When using 7.156.0 or greater of the sfdx-cli, REST deploy is no longer working.
 
-## Configure Your Salesforce DX Project
+**Expected**
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+```bash
+➜ SFDX_REST_DEPLOY=true sfdx force:source:push
+*** Pushing v55.0 metadata with REST API v54.0 connection ***
+```
 
-## Read All About It
+**Actual**
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+```bash
+➜ SFDX_REST_DEPLOY=true sfdx force:source:push
+*** Pushing with SOAP API v55.0 ***
+```
+
+## `.forceignore` in Subdirectory Takes Precedence
+
+Prior to version 7.156.0, if there was a `.forceignore` file in a subdirector of the project root where sfdx commands are run, it was ignored, and the one at the root was used.
+
+After version 7.156.0, it appears that the `.forceigore` files in subdirectories take precedence, and the one at the root is ignore completely.
+
+**Expected**
+
+When pushing this project's source to the scratch org, nothing is pushed - because it is ignored at the project root's `.forceignore`.
+
+**Actual**
+
+The permission set is pushed to the scratch org.
